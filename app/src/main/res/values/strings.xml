@@ -33,4 +33,6 @@
     <string name="phone_number_error">Please enter at least one phone number</string>
     <string name="success_save">Contact saved successfully.</string>
     <string name="new_contact">Add a new contact</string>
+    <string name="call">Call</string>
+    <string name="sms">SMS</string>
 </resources>
