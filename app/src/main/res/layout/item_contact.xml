@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_margin="4dp">
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:src="@drawable/ic_add_black"
+        android:id="@+id/item_profile_pic"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_contact_name"
+        android:padding="10dp"
+        tools:text="Cutarescu Xulescu"/>
+
+</LinearLayout>

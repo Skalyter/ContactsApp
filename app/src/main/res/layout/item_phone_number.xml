@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="10dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_category"
+        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+        android:entries="@array/phone_categories"
+        android:layout_gravity="center"
+        android:padding="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0.3"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="0.5"
+        android:padding="10dp"
+        app:boxBackgroundColor="@color/white">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone_number"
+            android:inputType="phone" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:padding="10dp"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/image_remove"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_remove"/>
+</LinearLayout>

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name" translatable="false">TPJAD Contacts App</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="contacts">Contacte</string>
+    <string name="title_activity_add_edit_contact">AddEditContactActivity</string>
+    <string name="search_contacts">Search Contacts</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email_address">Email address</string>
+    <string name="phone_number">Phone number</string>
+    <string name="category">Category</string>
+    <string name="no_label">No label</string>
+    <string name="mobile">Mobile</string>
+    <string name="work">Work</string>
+    <string name="home">Home</string>
+    <string name="fax_work">Work fax</string>
+    <string name="fax_home">Home fax</string>
+    <string name="others">Others</string>
+    <string name="main">Main</string>
+    <string name="add_another_number">Add another number</string>
+    <string name="phone_numbers">Phone numbers</string>
+    <string name="select_app_to_continue">Alege o aplicatie pentru a continua</string>
+    <string name="remove_last_phone_number_warn">A contact must have at least a phone number!</string>
+    <string name="first_name_error">Please fill in the name.</string>
+    <string name="phone_number_error">Please enter at least one phone number</string>
+    <string name="success_save">Contact saved successfully.</string>
+    <string name="new_contact">Add a new contact</string>
+</resources>

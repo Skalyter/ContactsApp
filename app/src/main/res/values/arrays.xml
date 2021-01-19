@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="phone_categories">
+        <item>@string/no_label</item>
+        <item>@string/mobile</item>
+        <item>@string/home</item>
+        <item>@string/work</item>
+        <item>@string/main</item>
+        <item>@string/fax_work</item>
+        <item>@string/fax_home</item>
+        <item>@string/others</item>
+    </string-array>
+</resources>
