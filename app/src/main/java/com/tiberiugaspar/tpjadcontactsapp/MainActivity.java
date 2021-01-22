@@ -1,13 +1,20 @@
 package com.tiberiugaspar.tpjadcontactsapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
@@ -17,6 +24,7 @@ import com.tiberiugaspar.tpjadcontactsapp.utils.TAGS;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -33,14 +41,19 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_ADD_CONTACT;
+import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_EDIT_CONTACT;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private List<Contact> contactList = new ArrayList<>();
+    private List<Contact> temporalList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ContactAdapter adapter;
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.contacts);
         setSupportActionBar(toolbar);
+        db = FirebaseFirestore.getInstance();
 
         findViewsByIds();
 
@@ -65,24 +79,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void findViewsByIds(){
         recyclerView = findViewById(R.id.recycler_contacts);
 
-        //TODO: delete/comment these lines after debugging
-        Contact contactDummy = new Contact();
-        contactDummy.setFirstName("Ion");
-        contactDummy.setLastName("Ionescu");
-        PhoneNumber phoneNumberDummy = new PhoneNumber("07555484333", 0);
-        contactDummy.getPhoneNumberList().add(phoneNumberDummy);
-        for (int i=0; i<50; i++){
-
-            contactList.add(contactDummy);
-            contactList.add(contactDummy);
-        }
-
-        adapter = new ContactAdapter(this, contactList);
+        adapter = new ContactAdapter(MainActivity.this, contactList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(
-                new LinearLayoutManager(this,
+                new LinearLayoutManager(MainActivity.this,
                         RecyclerView.VERTICAL,
                         false));
+
+        getContactsFromDb();
+
         SwipeController swipeController = new SwipeController(this, new SwipeControllerActions() {
             @Override
             public void onLeftClicked(int position) {
@@ -121,15 +126,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
-        return true;
+        return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-//        Toast.makeText(MainActivity.this, newText, Toast.LENGTH_SHORT).show();
+        if (newText == null || newText.length()<1){
+            adapter.contactList.clear();
+            adapter.contactList.addAll(temporalList);
+            adapter.notifyDataSetChanged();
+        } else {
+            getContactsForInput(newText);
+        }
         return true;
-
     }
 
     @Override
@@ -149,9 +158,47 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQ_CODE_ADD_CONTACT && resultCode == RESULT_OK){
-            //TODO: actualizam lista
-        }
 
+            getContactsFromDb();
+        }
+        if (requestCode == REQ_CODE_EDIT_CONTACT && resultCode == RESULT_OK){
+
+            getContactsFromDb();
+        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void getContactsFromDb(){
+        db.collection("contacts")
+//                .whereEqualTo("userId", userId) //todo get user id)
+                .orderBy("firstName", Query.Direction.ASCENDING)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                contactList.clear();
+                for (DocumentSnapshot snapshot : queryDocumentSnapshots) {
+                    Contact contact = snapshot.toObject(Contact.class);
+                    contactList.add(contact);
+                }
+                adapter.notifyDataSetChanged();
+                temporalList.addAll(contactList);
+            }
+        });
+    }
+
+    private void getContactsForInput(String input){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            List<Contact> filteredList = contactList.stream()
+                    .filter(c ->
+                            (c.getFirstName().toLowerCase().startsWith(input.toLowerCase()))
+                                    || (c.getLastName().toLowerCase().startsWith(input.toLowerCase())))
+                    .collect(Collectors.toList());
+
+            adapter.contactList.clear();
+            adapter.contactList.addAll(filteredList);
+            adapter.notifyDataSetChanged();
+        } else {
+            Toast.makeText(this, R.string.search_unavailable, Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".ContactDetailsActivity"
+    tools:showIn="@layout/activity_contact_details">
+
+    <ImageView
+        android:id="@+id/contact_image"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_margin="20dp"
+        tools:src="@drawable/ic_user" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/first_name_label"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/contact_first_name"
+        style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:textSize="18sp"
+        tools:text="First-name" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/last_name_label"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/contact_last_name"
+        style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:textSize="18sp"
+        tools:text="Last-name" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/email"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/contact_email"
+        style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:textSize="18sp"
+        tools:text="email@emailaddress.com" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/phone_number_label"
+        android:textSize="16sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="15dp"
+        android:paddingBottom="20dp"
+        tools:listitem="@layout/item_contact_details_number" />
+
+</LinearLayout>

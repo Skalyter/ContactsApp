@@ -8,16 +8,21 @@
     android:layout_margin="4dp">
 
     <ImageView
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:padding="10dp"
-        android:src="@drawable/ic_add_black"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_add_black"
         android:id="@+id/item_profile_pic"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/item_contact_name"
+        android:textSize="18sp"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        style="@style/TextAppearance.MaterialComponents.Body2"
         android:padding="10dp"
         tools:text="Cutarescu Xulescu"/>
 

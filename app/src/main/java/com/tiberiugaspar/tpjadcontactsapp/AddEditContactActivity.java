@@ -95,7 +95,6 @@ public class AddEditContactActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             if (areFieldsValid()){
-                //TODO: save contact in db
                 saveContact();
             }
         });
