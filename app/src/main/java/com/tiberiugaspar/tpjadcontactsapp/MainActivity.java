@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String newText) {
         if (newText == null || newText.length()<1){
-            adapter.contactList.clear();
-            adapter.contactList.addAll(temporalList);
+            contactList.clear();
+            contactList.addAll(temporalList);
             adapter.notifyDataSetChanged();
         } else {
             getContactsForInput(newText);
@@ -188,14 +188,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void getContactsForInput(String input){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            contactList.clear();
+            contactList.addAll(temporalList);
             List<Contact> filteredList = contactList.stream()
                     .filter(c ->
                             (c.getFirstName().toLowerCase().startsWith(input.toLowerCase()))
                                     || (c.getLastName().toLowerCase().startsWith(input.toLowerCase())))
                     .collect(Collectors.toList());
 
-            adapter.contactList.clear();
-            adapter.contactList.addAll(filteredList);
+            contactList.clear();
+            contactList.addAll(filteredList);
             adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(this, R.string.search_unavailable, Toast.LENGTH_SHORT).show();

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SimplePhoneNumberAdapter extends RecyclerView.Adapter<SimplePhoneNumberAdapter.SimplePhoneNumberViewHolder> {
 
-    public final List<PhoneNumber> phoneNumberList;
+    private final List<PhoneNumber> phoneNumberList;
     private final Context context;
 
     public SimplePhoneNumberAdapter(List<PhoneNumber> phoneNumberList, Context context) {

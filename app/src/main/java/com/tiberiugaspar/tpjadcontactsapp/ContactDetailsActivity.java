@@ -42,6 +42,8 @@ public class ContactDetailsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SimplePhoneNumberAdapter adapter;
 
+    private List<PhoneNumber> phoneNumberList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,8 +116,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         lastName = findViewById(R.id.contact_last_name);
         email = findViewById(R.id.contact_email);
         recyclerView = findViewById(R.id.recycler_contacts);
-        List<PhoneNumber> list = new ArrayList<>();
-        adapter = new SimplePhoneNumberAdapter(list, this);
+        adapter = new SimplePhoneNumberAdapter(phoneNumberList, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     }
@@ -125,8 +126,8 @@ public class ContactDetailsActivity extends AppCompatActivity {
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
         email.setText(contact.getEmail());
-        adapter.phoneNumberList.clear();
-        adapter.phoneNumberList.addAll(contact.getPhoneNumberList());
+        phoneNumberList.clear();
+        phoneNumberList.addAll(contact.getPhoneNumberList());
         adapter.notifyDataSetChanged();
     }
 
