@@ -71,8 +71,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         contactDummy.setLastName("Ionescu");
         PhoneNumber phoneNumberDummy = new PhoneNumber("07555484333", 0);
         contactDummy.getPhoneNumberList().add(phoneNumberDummy);
-        contactList.add(contactDummy);
-        contactList.add(contactDummy);
+        for (int i=0; i<50; i++){
+
+            contactList.add(contactDummy);
+            contactList.add(contactDummy);
+        }
 
         adapter = new ContactAdapter(this, contactList);
         recyclerView.setAdapter(adapter);
@@ -89,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         .get(0).getPhoneNumber();
 
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-
                 callIntent.setData(Uri.parse("tel:"+phoneNumber));
                 startActivity(callIntent);
             }

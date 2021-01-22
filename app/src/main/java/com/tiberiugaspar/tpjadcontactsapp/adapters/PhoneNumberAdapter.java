@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PhoneNumberAdapter extends RecyclerView.Adapter<PhoneNumberAdapter.PhoneNumberViewHolder> {
 
-    final private List<PhoneNumber> phoneNumberList;
+    final public List<PhoneNumber> phoneNumberList;
     final private Context context;
 
     public PhoneNumberAdapter(List<PhoneNumber> phoneNumberList, Context context) {

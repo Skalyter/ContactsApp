@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "591387712484",
+    "project_id": "contactsapp-5ddbe",
+    "storage_bucket": "contactsapp-5ddbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591387712484:android:dbd9b2224a73ecadcac5f1",
+        "android_client_info": {
+          "package_name": "com.tiberiugaspar.tpjadcontactsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591387712484-38pdkopl2g093785i62t0vv7r7f3r7tj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiberiugaspar.tpjadcontactsapp",
+            "certificate_hash": "89cd935113b3687a5d9e2e8168926033b6364583"
+          }
+        },
+        {
+          "client_id": "591387712484-ssp42i9f12s9ejakhd79l82t0gugqglq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0iqf8Pa9rbthcExj9zwnZQOysS9fiFJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591387712484-ssp42i9f12s9ejakhd79l82t0gugqglq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -35,4 +35,6 @@
     <string name="new_contact">Add a new contact</string>
     <string name="call">Call</string>
     <string name="sms">SMS</string>
+    <string name="contact_add_success">Contact saved successfully.</string>
+    <string name="contact_error_adding">There was a problem with inserting the contact.</string>
 </resources>

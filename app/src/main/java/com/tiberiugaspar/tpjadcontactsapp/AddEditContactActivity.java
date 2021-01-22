@@ -5,18 +5,26 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.PhoneNumberAdapter;
+import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,11 +39,14 @@ import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_PHOTO_PICKE
 
 public class AddEditContactActivity extends AppCompatActivity {
 
+    private static final String TAG = "AddEditContactActivity";
     private ImageView addNumber, addPhoto;
     private TextInputEditText firstName, lastName, email, phoneNumber;
     private RecyclerView recyclerView;
     private PhoneNumberAdapter adapter;
     private List<PhoneNumber> phoneNumberList = new ArrayList<>();
+
+    private Uri selectedImageUri;
 
     private void findViewsByIds(){
         addNumber = findViewById(R.id.image_add_number);
@@ -85,16 +96,48 @@ public class AddEditContactActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> {
             if (areFieldsValid()){
                 //TODO: save contact in db
-                Toast.makeText(AddEditContactActivity.this,
-                        R.string.success_save,
-                        Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
+                saveContact();
             }
         });
 
         findViewsByIds();
         initializeListeners();
+    }
+
+    private void saveContact(){
+        Contact contact = new Contact();
+        contact.setFirstName(Objects.requireNonNull(firstName.getText()).toString());
+        contact.setLastName(Objects.requireNonNull(lastName.getText()).toString());
+        contact.setPhoneNumberList(adapter.phoneNumberList);
+        contact.setEmail(Objects.requireNonNull(email.getText()).toString());
+        contact.setUriToImage(String.valueOf(selectedImageUri));
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("contacts").document();
+
+        contact.setContactId(docRef.getId());
+
+        docRef.set(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(
+                        AddEditContactActivity.this, R.string.contact_add_success,
+                        Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "onSuccess: contact successfully inserted");
+                setResult(RESULT_OK);
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(
+                        AddEditContactActivity.this, R.string.contact_error_adding,
+                        Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "onFailure: " + e.getMessage());
+            }
+        });
     }
 
     private final View.OnClickListener onProfileImageClickListener = view -> {
@@ -107,8 +150,8 @@ public class AddEditContactActivity extends AppCompatActivity {
     };
 
     private final View.OnClickListener onPhoneNumberAddClickListener = view -> {
-        phoneNumberList.add(new PhoneNumber("", 0));
-        adapter.notifyItemRangeInserted(phoneNumberList.size()-1, phoneNumberList.size());
+        adapter.phoneNumberList.add(new PhoneNumber("",0));
+        adapter.notifyItemRangeInserted(adapter.phoneNumberList.size()-1, adapter.phoneNumberList.size());
     };
 
     private boolean areFieldsValid(){
@@ -117,9 +160,9 @@ public class AddEditContactActivity extends AppCompatActivity {
             firstName.setError(getString(R.string.first_name_error));
             return false;
         }
-        if (phoneNumberList.isEmpty()
-                || phoneNumberList.get(0).getPhoneNumber() == null
-                || phoneNumberList.get(0).getPhoneNumber().equals("")){
+        if (adapter.phoneNumberList.isEmpty()
+                || adapter.phoneNumberList.get(0).getPhoneNumber() == null
+                || adapter.phoneNumberList.get(0).getPhoneNumber().equals("")){
             Toast.makeText(this,
                     getString(R.string.phone_number_error),
                     Toast.LENGTH_SHORT).show();
@@ -132,7 +175,7 @@ public class AddEditContactActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
         if (requestCode == REQ_CODE_PHOTO_PICKER && resultCode == RESULT_OK){
-            final Uri selectedImageUri = data.getData();
+            selectedImageUri = data.getData();
             Glide.with(addPhoto.getContext()).load(selectedImageUri).into(addPhoto);
         }
         super.onActivityResult(requestCode, resultCode, data);
