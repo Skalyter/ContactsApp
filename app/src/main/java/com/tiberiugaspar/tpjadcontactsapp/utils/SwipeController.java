@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
@@ -24,7 +25,7 @@ public class SwipeController extends Callback {
 
     private boolean swipeBack = false;
     private ButtonsState buttonShowedState = ButtonsState.GONE;
-    private static final float buttonWidth = 175;
+    private static final float buttonWidth = 160;
 
     private RectF buttonInstance;
 
@@ -171,15 +172,11 @@ public class SwipeController extends Callback {
         Paint p = new Paint();
 
         RectF leftButton = new RectF(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + buttonWidthWithoutPadding, itemView.getBottom());
-        p.setColor(Color.GREEN);
+        p.setColor(Color.WHITE);
         c.drawRoundRect(leftButton, corners, corners, p);
         drawBitmap(R.drawable.ic_call_white, c, leftButton);
-        drawText(context.getString(R.string.call), c, leftButton, p);
-
         RectF rightButton = new RectF(itemView.getRight() - buttonWidthWithoutPadding, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-        p.setColor(Color.MAGENTA);
         c.drawRoundRect(rightButton, corners, corners, p);
-//        drawText(context.getString(R.string.sms), c, rightButton, p);
         drawBitmap(R.drawable.ic_sms_white, c, rightButton);
 
         buttonInstance = null;
@@ -190,39 +187,27 @@ public class SwipeController extends Callback {
         }
     }
 
-    //TODO replace drawText with drawBitmap -icon call/message
-    private void drawText(String text, Canvas c, RectF button, Paint p) {
-        float textSize = 50;
-        p.setColor(Color.WHITE);
-        p.setAntiAlias(true);
-        p.setTextSize(textSize);
-//        c.drawBitmap();
-
-        float textWidth = p.measureText(text);
-        c.drawText(text, button.centerX() - (textWidth / 2), button.centerY() + (textSize / 2), p);
-    }
-
     private void drawBitmap(int drawableRes, Canvas canvas,  RectF button){
-
-        Paint p = new Paint();
-        p.setColor(Color.YELLOW);
-        p.setAntiAlias(true);
 
         Drawable drawable = context.getDrawable(drawableRes);
 
-        drawable.setBounds(canvas.getWidth()/2, canvas.getHeight()/2, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        Rect rect = new Rect();
+        button.round(rect);
+        drawable.setBounds(rect);
+
         drawable.draw(canvas);
 
-        Bitmap bitmap
-                = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                Bitmap.Config.ARGB_8888);
         float imgWidth = drawable.getIntrinsicWidth();
         float imgHeight = drawable.getIntrinsicHeight();
 
+        Bitmap bitmap
+                = Bitmap.createBitmap((int)imgHeight,
+                (int)imgWidth,
+                Bitmap.Config.ARGB_4444);
+
         canvas.drawBitmap(bitmap,
                 button.centerX() - (imgWidth/2),
-                button.centerY() + (imgHeight/2), p);
+                button.centerY() + (imgHeight/2), null);
 
 
     }
