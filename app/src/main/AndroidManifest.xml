@@ -12,16 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TPJADContactsApp">
-
-        <activity android:name=".ContactDetailsActivity"
+        <activity android:name=".auth.RegisterActivity"></activity>
+        <activity android:name=".auth.LoginActivity" />
+        <activity
+            android:name=".ContactDetailsActivity"
             android:label="@string/title_activity_add_edit_contact"
-            android:theme="@style/Theme.TPJADContactsApp.NoActionBar"  />
-
+            android:theme="@style/Theme.TPJADContactsApp.NoActionBar" />
         <activity
             android:name=".AddEditContactActivity"
             android:label="@string/title_activity_add_edit_contact"
             android:theme="@style/Theme.TPJADContactsApp.NoActionBar" />
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

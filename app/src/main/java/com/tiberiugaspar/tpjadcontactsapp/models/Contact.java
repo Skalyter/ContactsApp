@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Contact {
 
+    private String userId;
     private String contactId;
     private String firstName;
     private String lastName;
@@ -13,6 +14,14 @@ public class Contact {
     private String uriToImage;
 
     public Contact() {
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getContactId() {

@@ -2,10 +2,8 @@
     <string name="app_name" translatable="false">TPJAD Contacts App</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="register_message">No account yet? Create one.</string>
+    <string name="login_message">Already have an account? Click here to login.</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
@@ -53,4 +51,15 @@
     <string name="btn_delete">Delete</string>
     <string name="btn_cancel">Cancel</string>
     <string name="remove_contact_success_message">Contact successfully removed.</string>
+    <string name="title_activity_authentication">AuthenticationActivity</string>
+    <string name="email_address">Email address</string>
+    <string name="password">Password</string>
+    <string name="login">login</string>
+    <string name="register">register</string>
+    <string name="email_fill_in_warn">Please fill in the email address as example@domain.com</string>
+    <string name="password_warn">Password must be at least 6 characters long</string>
+    <string name="key_logged_in">key_user_logged_in</string>
+    <string name="value_true">true</string>
+    <string name="press_back_again">Press Back again to exit</string>
+    <string name="key_user_id">key_user_id</string>
 </resources>
