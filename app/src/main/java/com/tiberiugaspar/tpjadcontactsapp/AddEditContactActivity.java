@@ -16,17 +16,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.PhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +52,7 @@ public class AddEditContactActivity extends AppCompatActivity {
 
     FirebaseFirestore db;
 
-    private Contact contact;
+    private Contact contact = new Contact();
 
     private Uri selectedImageUri;
 
@@ -231,7 +238,29 @@ public class AddEditContactActivity extends AppCompatActivity {
 
         if (requestCode == REQ_CODE_PHOTO_PICKER && resultCode == RESULT_OK) {
             selectedImageUri = data.getData();
-            Glide.with(addPhoto.getContext()).load(selectedImageUri).into(addPhoto);
+            final StorageReference storageReference = FirebaseStorage.getInstance()
+                    .getReference().child("contacts_photos")
+                    .child(selectedImageUri.getLastPathSegment());
+            UploadTask uploadTask = storageReference.putFile(selectedImageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()){
+                        selectedImageUri = task.getResult();
+                        //todo change upload rules in storage
+                        Glide.with(addPhoto.getContext()).load(selectedImageUri).circleCrop().into(addPhoto);
+                    }
+                }
+            });
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

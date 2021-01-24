@@ -1,12 +1,7 @@
 package com.tiberiugaspar.tpjadcontactsapp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,7 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,11 +27,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.SimplePhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
+import com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.*;
+import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.getContactInitials;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.EXTRA_CONTACT_ID;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_EDIT_CONTACT;
 
@@ -44,6 +51,10 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
     private List<PhoneNumber> phoneNumberList = new ArrayList<>();
 
+    private FirebaseFirestore db;
+
+    private boolean contactEdited = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,15 +66,19 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> {
-            setResult(RESULT_CANCELED);
+            if (contactEdited) {
+                setResult(RESULT_OK);
+            } else {
+                setResult(RESULT_CANCELED);
+            }
             finish();
         });
         Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_CONTACT_ID)){
+        if (intent.hasExtra(EXTRA_CONTACT_ID)) {
 
             contactId = intent.getStringExtra(EXTRA_CONTACT_ID);
 
-            if (contactId == null || contactId.equals("null") || contactId.equals("")){
+            if (contactId == null || contactId.equals("null") || contactId.equals("")) {
                 Toast.makeText(this, R.string.try_again_error_message, Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -78,39 +93,47 @@ public class ContactDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.contact_edit:
-                //todo start activity addeditcontact
                 Intent intent = new Intent(ContactDetailsActivity.this, AddEditContactActivity.class);
                 intent.putExtra(EXTRA_CONTACT_ID, contact.getContactId());
                 startActivityForResult(intent, REQ_CODE_EDIT_CONTACT);
                 return true;
             case R.id.contact_delete:
-                //todo delete contact and finish activity(+prompt message)
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ContactDetailsActivity.this)
+                        .setTitle(R.string.delete_contact_title)
+                        .setMessage(R.string.delete_contact_message)
+                        .setPositiveButton(getString(R.string.btn_delete), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                removeContactFromDb();
+                            }
+                        }).setNeutralButton(getString(R.string.btn_cancel), null);
+                dialogBuilder.show();
                 return true;
             default:
-                return  super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
-    private void getContactFromDb(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void getContactFromDb() {
+        db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("contacts")
                 .document(contactId);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 contact = documentSnapshot.toObject(Contact.class);
-                initializeFields();
+                initializeViews();
             }
         });
     }
-    private void findViewsByIds(){
+
+    private void findViewsByIds() {
         contactImage = findViewById(R.id.contact_image);
         firstName = findViewById(R.id.contact_first_name);
         lastName = findViewById(R.id.contact_last_name);
@@ -121,8 +144,20 @@ public class ContactDetailsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     }
 
-    private void initializeFields() {
-        Glide.with(contactImage.getContext()).load(contact.getUriToImage()).into(contactImage);
+    private void initializeViews() {
+        if (contact.getUriToImage() != null
+                && !contact.getUriToImage().equals("")
+                && !contact.getUriToImage().equals("null")) {
+            Glide.with(contactImage.getContext()).load(contact.getUriToImage()).circleCrop().into(contactImage);
+        } else {
+            TextDrawable drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .width(150)
+                    .height(150)
+                    .endConfig()
+                    .buildRound(getContactInitials(contact), getRandomColor());
+            contactImage.setImageDrawable(drawable);
+        }
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
         email.setText(contact.getEmail());
@@ -133,9 +168,30 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQ_CODE_EDIT_CONTACT && resultCode == RESULT_OK){
+        if (requestCode == REQ_CODE_EDIT_CONTACT && resultCode == RESULT_OK) {
             getContactFromDb();
+            contactEdited = true;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void removeContactFromDb() {
+        db.collection("contacts")
+                .document(contactId).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(ContactDetailsActivity.this, R.string.remove_contact_success_message,
+                                Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ContactDetailsActivity.this, R.string.try_again_error_message,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

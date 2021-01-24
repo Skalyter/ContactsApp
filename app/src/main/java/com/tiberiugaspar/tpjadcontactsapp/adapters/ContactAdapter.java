@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
 import com.tiberiugaspar.tpjadcontactsapp.ContactDetailsActivity;
 import com.tiberiugaspar.tpjadcontactsapp.R;
@@ -25,9 +27,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private final Context context;
     private final List<Contact> contactList;
 
+    private final ColorGenerator generator;
+
+    private TextDrawable.IBuilder builder;
+
     public ContactAdapter(Context context, List<Contact> contactList) {
         this.context = context;
         this.contactList = contactList;
+        generator = ColorGenerator.MATERIAL;
+        builder = TextDrawable.builder()
+                .beginConfig()
+                    .width(60)
+                    .height(60)
+                .endConfig()
+                .round();
     }
 
     @NonNull
@@ -42,10 +55,23 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         Contact contact = contactList.get(position);
         holder.contactName.setText(String.format("%s %s", contact.getFirstName(), contact.getLastName()));
-        if (contact.getUriToImage()==null || contact.getUriToImage().equals("null")){
-            //todo: add gradle dependency from github project for custom icons
+        if (contact.getUriToImage()==null
+                || contact.getUriToImage().equals("null")
+                || contact.getUriToImage().equals("")){
+
+            String initials = contact.getFirstName().substring(0,1);
+            if (contact.getLastName()!=null && contact.getLastName().length() > 1){
+                initials = String.format("%s%s", initials, contact.getLastName().substring(0, 1));
+            }
+            int color = generator.getRandomColor();
+
+            TextDrawable drawable = builder.build(initials, color);
+
+            holder.contactPicture.setImageDrawable(drawable);
+
         } else {
-            Glide.with(holder.contactPicture.getContext()).load(contact.getUriToImage()).into(holder.contactPicture);
+            Glide.with(holder.contactPicture.getContext()).load(contact.getUriToImage()).circleCrop()
+                    .into(holder.contactPicture);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

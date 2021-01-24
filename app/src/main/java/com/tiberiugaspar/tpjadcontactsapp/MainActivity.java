@@ -1,35 +1,26 @@
 package com.tiberiugaspar.tpjadcontactsapp;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
-import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeController;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeControllerActions;
-import com.tiberiugaspar.tpjadcontactsapp.utils.TAGS;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.ItemTouchHelper.Callback;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -64,7 +55,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setSupportActionBar(toolbar);
         db = FirebaseFirestore.getInstance();
 
-        findViewsByIds();
+        initializeViews();
+    }
+
+    private void initializeViews(){
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,9 +68,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 startActivityForResult(intent, REQ_CODE_ADD_CONTACT);
             }
         });
-    }
 
-    private void findViewsByIds(){
         recyclerView = findViewById(R.id.recycler_contacts);
 
         adapter = new ContactAdapter(MainActivity.this, contactList);
