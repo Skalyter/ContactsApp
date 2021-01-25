@@ -4,18 +4,12 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
-import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
-import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeController;
-import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeControllerActions;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -24,11 +18,19 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
+import com.tiberiugaspar.tpjadcontactsapp.auth.LoginActivity;
+import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
+import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
+import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeController;
+import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeControllerActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +41,13 @@ import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_EDIT_CONTAC
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private List<Contact> contactList = new ArrayList<>();
-    private List<Contact> temporalList = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private final List<Contact> contactList = new ArrayList<>();
+    private final List<Contact> temporalList = new ArrayList<>();
     private ContactAdapter adapter;
 
     private FirebaseFirestore db;
+
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         initializeViews();
     }
 
-    private void initializeViews(){
+    private void initializeViews() {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
-        recyclerView = findViewById(R.id.recycler_contacts);
+        RecyclerView recyclerView = findViewById(R.id.recycler_contacts);
 
         adapter = new ContactAdapter(MainActivity.this, contactList);
         recyclerView.setAdapter(adapter);
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 new LinearLayoutManager(MainActivity.this,
                         RecyclerView.VERTICAL,
                         false));
-
+        userId = SharedPrefUtils.getUserId(getApplicationContext());
         getContactsFromDb();
 
         SwipeController swipeController = new SwipeController(this, new SwipeControllerActions() {
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         .get(0).getPhoneNumber();
 
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:"+phoneNumber));
+                callIntent.setData(Uri.parse(String.format("tel:%s", phoneNumber)));
                 startActivity(callIntent);
             }
 
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 Intent smsIntent = new Intent(Intent.ACTION_VIEW);
 
-                smsIntent.setData(Uri.parse("sms:"+phoneNumber));
+                smsIntent.setData(Uri.parse(String.format("sms:%s", phoneNumber)));
                 startActivity(smsIntent);
             }
         });
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         touchHelper.attachToRecyclerView(recyclerView);
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            public void onDraw(Canvas c, RecyclerView parent, @NonNull RecyclerView.State state) {
                 swipeController.onDraw(c);
             }
         });
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (newText == null || newText.length()<1){
+        if (newText == null || newText.length() < 1) {
             contactList.clear();
             contactList.addAll(temporalList);
             adapter.notifyDataSetChanged();
@@ -148,21 +151,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.button_logout) {
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.signOut();
+
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
+            finish();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQ_CODE_ADD_CONTACT && resultCode == RESULT_OK){
+        if (requestCode == REQ_CODE_ADD_CONTACT && resultCode == RESULT_OK) {
 
             getContactsFromDb();
         }
-        if (requestCode == REQ_CODE_EDIT_CONTACT && resultCode == RESULT_OK){
+        if (requestCode == REQ_CODE_EDIT_CONTACT && resultCode == RESULT_OK) {
 
             getContactsFromDb();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void getContactsFromDb(){
+    private void getContactsFromDb() {
         db.collection("contacts")
-//                .whereEqualTo("userId", userId) //todo get user id)
+                .whereEqualTo("userId", userId)
                 .orderBy("firstName", Query.Direction.ASCENDING)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -178,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
     }
 
-    private void getContactsForInput(String input){
+    private void getContactsForInput(String input) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             contactList.clear();
             contactList.addAll(temporalList);

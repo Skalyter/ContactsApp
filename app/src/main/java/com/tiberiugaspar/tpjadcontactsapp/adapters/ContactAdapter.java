@@ -18,9 +18,9 @@ import com.bumptech.glide.Glide;
 import com.tiberiugaspar.tpjadcontactsapp.ContactDetailsActivity;
 import com.tiberiugaspar.tpjadcontactsapp.R;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
+import com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils;
 import com.tiberiugaspar.tpjadcontactsapp.utils.TAGS;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
@@ -55,14 +55,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         Contact contact = contactList.get(position);
         holder.contactName.setText(String.format("%s %s", contact.getFirstName(), contact.getLastName()));
-        if (contact.getUriToImage()==null
+        if (contact.getUriToImage() == null
                 || contact.getUriToImage().equals("null")
-                || contact.getUriToImage().equals("")){
+                || contact.getUriToImage().equals("")) {
 
-            String initials = contact.getFirstName().substring(0,1);
-            if (contact.getLastName()!=null && contact.getLastName().length() > 1){
-                initials = String.format("%s%s", initials, contact.getLastName().substring(0, 1));
-            }
+            String initials = ContactUtils.getContactInitials(contact);
+
             int color = generator.getRandomColor();
 
             TextDrawable drawable = builder.build(initials, color);

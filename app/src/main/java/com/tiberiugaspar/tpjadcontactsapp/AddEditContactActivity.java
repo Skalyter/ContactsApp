@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,12 +33,14 @@ import com.google.firebase.storage.UploadTask;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.PhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
+import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.getContactInitials;
+import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.getRandomColor;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.EXTRA_CONTACT_ID;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_PHOTO_PICKER;
 
@@ -45,16 +48,16 @@ public class AddEditContactActivity extends AppCompatActivity {
 
     private static final String TAG = "AddEditContactActivity";
     private ImageView addNumber, addPhoto;
-    private TextInputEditText firstName, lastName, email, phoneNumber;
-    private RecyclerView recyclerView;
+    private final List<PhoneNumber> phoneNumberList = new ArrayList<>();
     private PhoneNumberAdapter adapter;
-    private List<PhoneNumber> phoneNumberList = new ArrayList<>();
+    private TextInputEditText firstName, lastName, email;
 
     FirebaseFirestore db;
 
     private Contact contact = new Contact();
+    private Uri selectedImageUri = null;
 
-    private Uri selectedImageUri;
+    private String userId = null;
 
     private void findViewsByIds() {
         addNumber = findViewById(R.id.image_add_number);
@@ -62,9 +65,8 @@ public class AddEditContactActivity extends AppCompatActivity {
         firstName = findViewById(R.id.first_name);
         lastName = findViewById(R.id.last_name);
         email = findViewById(R.id.email);
-        phoneNumber = findViewById(R.id.phone_number);
 
-        recyclerView = findViewById(R.id.recycler_phone_numbers);
+        RecyclerView recyclerView = findViewById(R.id.recycler_phone_numbers);
         adapter = new PhoneNumberAdapter(phoneNumberList, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -82,6 +84,20 @@ public class AddEditContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit_contact);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            if (fieldsAreValid()) {
+                if (contact.getContactId() != null && contact.getContactId().length() > 1) {
+                    updateContact();
+                } else {
+                    saveContact();
+                }
+            }
+        });
+
+        findViewsByIds();
+        initializeListeners();
+
         db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
@@ -98,7 +114,25 @@ public class AddEditContactActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     contact = documentSnapshot.toObject(Contact.class);
 
-                    Glide.with(addPhoto.getContext()).load(contact.getUriToImage()).into(addPhoto);
+                    if (Objects.requireNonNull(contact).getUriToImage() == null
+                            || contact.getUriToImage().equals("")
+                            || contact.getUriToImage().equals("null")) {
+
+                        TextDrawable drawable = TextDrawable.builder()
+                                .beginConfig()
+                                .width(150)
+                                .height(150)
+                                .endConfig()
+                                .buildRound(getContactInitials(contact), getRandomColor());
+
+                        addPhoto.setImageDrawable(drawable);
+
+                    } else {
+
+                        Glide.with(addPhoto.getContext()).load(contact.getUriToImage())
+                                .circleCrop().into(addPhoto);
+                    }
+
                     firstName.setText(contact.getFirstName());
                     lastName.setText(contact.getLastName());
                     email.setText(contact.getEmail());
@@ -109,7 +143,10 @@ public class AddEditContactActivity extends AppCompatActivity {
             });
 
         } else {
+            phoneNumberList.add(new PhoneNumber("", 0));
+            adapter.notifyItemRangeInserted(0, phoneNumberList.size());
 
+            userId = SharedPrefUtils.getUserId(getApplicationContext());
             toolbar.setTitle(R.string.new_contact);
         }
 
@@ -121,33 +158,22 @@ public class AddEditContactActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
             finish();
         });
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            if (fieldsAreValid()) {
-                if (contact.getContactId()!= null && contact.getContactId().length()>1){
-                    updateContact();
-                } else {
-                    saveContact();
-                }
-            }
-        });
-
-        findViewsByIds();
-        initializeListeners();
     }
 
-    private void retrieveDataFromViews(){
+    private void retrieveDataFromViews() {
         contact.setFirstName(Objects.requireNonNull(firstName.getText()).toString());
         contact.setLastName(Objects.requireNonNull(lastName.getText()).toString());
         contact.setPhoneNumberList(phoneNumberList);
         contact.setEmail(Objects.requireNonNull(email.getText()).toString());
-        contact.setUriToImage(String.valueOf(selectedImageUri));
+        if (selectedImageUri != null) {
+            contact.setUriToImage(String.valueOf(selectedImageUri));
+        }
     }
 
     private void saveContact() {
 
         retrieveDataFromViews();
+        contact.setUserId(userId);
 
         DocumentReference docRef = db.collection("contacts").document();
 

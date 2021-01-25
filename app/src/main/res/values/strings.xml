@@ -52,7 +52,6 @@
     <string name="btn_cancel">Cancel</string>
     <string name="remove_contact_success_message">Contact successfully removed.</string>
     <string name="title_activity_authentication">AuthenticationActivity</string>
-    <string name="email_address">Email address</string>
     <string name="password">Password</string>
     <string name="login">login</string>
     <string name="register">register</string>
@@ -62,4 +61,6 @@
     <string name="value_true">true</string>
     <string name="press_back_again">Press Back again to exit</string>
     <string name="key_user_id">key_user_id</string>
+    <string name="search">Search</string>
+    <string name="logout">Logout</string>
 </resources>

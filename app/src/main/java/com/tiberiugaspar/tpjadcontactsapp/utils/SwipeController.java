@@ -29,7 +29,7 @@ public class SwipeController extends Callback {
 
     private RectF buttonInstance;
 
-    private SwipeControllerActions buttonsActions = null;
+    private SwipeControllerActions buttonsActions;
 
     private RecyclerView.ViewHolder currentItemViewHolder = null;
 
@@ -174,10 +174,10 @@ public class SwipeController extends Callback {
         RectF leftButton = new RectF(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + buttonWidthWithoutPadding, itemView.getBottom());
         p.setColor(Color.WHITE);
         c.drawRoundRect(leftButton, corners, corners, p);
-        drawBitmap(R.drawable.ic_call_white, c, leftButton);
+        drawBitmap(R.drawable.ic_call_green, c, leftButton);
         RectF rightButton = new RectF(itemView.getRight() - buttonWidthWithoutPadding, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         c.drawRoundRect(rightButton, corners, corners, p);
-        drawBitmap(R.drawable.ic_sms_white, c, rightButton);
+        drawBitmap(R.drawable.ic_sms_blue, c, rightButton);
 
         buttonInstance = null;
         if (buttonShowedState == ButtonsState.LEFT_VISIBLE) {

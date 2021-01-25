@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="4dp"
     android:orientation="horizontal">
 
     <TextView
@@ -10,7 +11,8 @@
         style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
+        android:layout_gravity="center"
+        android:layout_weight="0.35"
         android:padding="10dp"
         android:textSize="16sp"
         tools:text="No label" />
@@ -20,10 +22,29 @@
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
+        android:layout_gravity="center"
+        android:layout_weight="0.35"
         android:padding="10dp"
         android:textIsSelectable="true"
         android:textSize="16sp"
         tools:text="07555555555" />
+
+    <ImageView
+        android:id="@+id/item_call"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="0.15"
+        android:paddingVertical="5dp"
+        android:src="@drawable/ic_call_green" />
+
+    <ImageView
+        android:id="@+id/item_sms"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="0.15"
+        android:paddingVertical="5dp"
+        android:src="@drawable/ic_sms_blue" />
 
 </LinearLayout>

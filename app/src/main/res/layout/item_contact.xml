@@ -12,7 +12,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="centerCrop"
-        tools:src="@drawable/ic_add_black"
+        tools:src="@drawable/ic_user"
         android:id="@+id/item_profile_pic"/>
 
     <TextView

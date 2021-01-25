@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="10dp"
     android:baselineAligned="false"
     android:orientation="horizontal">
@@ -44,5 +43,5 @@
         android:layout_gravity="center_vertical"
         android:id="@+id/image_remove"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_remove"/>
+        android:src="@drawable/ic_remove_red" />
 </LinearLayout>

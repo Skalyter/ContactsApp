@@ -27,14 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.SimplePhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
-import com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.*;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.getContactInitials;
+import static com.tiberiugaspar.tpjadcontactsapp.utils.ContactUtils.getRandomColor;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.EXTRA_CONTACT_ID;
 import static com.tiberiugaspar.tpjadcontactsapp.utils.TAGS.REQ_CODE_EDIT_CONTACT;
 
@@ -65,14 +64,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(view -> {
-            if (contactEdited) {
-                setResult(RESULT_OK);
-            } else {
-                setResult(RESULT_CANCELED);
-            }
-            finish();
-        });
+        toolbar.setNavigationOnClickListener(view -> onBackPressed());
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_CONTACT_ID)) {
 
@@ -91,6 +83,16 @@ public class ContactDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contact_details_menu, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (contactEdited) {
+            setResult(RESULT_OK);
+        } else {
+            setResult(RESULT_CANCELED);
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -145,19 +147,23 @@ public class ContactDetailsActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+
         if (contact.getUriToImage() != null
                 && !contact.getUriToImage().equals("")
                 && !contact.getUriToImage().equals("null")) {
             Glide.with(contactImage.getContext()).load(contact.getUriToImage()).circleCrop().into(contactImage);
         } else {
+
             TextDrawable drawable = TextDrawable.builder()
                     .beginConfig()
                     .width(150)
                     .height(150)
                     .endConfig()
                     .buildRound(getContactInitials(contact), getRandomColor());
+
             contactImage.setImageDrawable(drawable);
         }
+
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
         email.setText(contact.getEmail());

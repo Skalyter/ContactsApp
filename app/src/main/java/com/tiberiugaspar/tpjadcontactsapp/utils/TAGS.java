@@ -1,7 +1,5 @@
 package com.tiberiugaspar.tpjadcontactsapp.utils;
 
-import java.util.regex.Pattern;
-
 public abstract class TAGS {
 
     public static final int REQ_CODE_ADD_CONTACT = 100;
@@ -11,6 +9,6 @@ public abstract class TAGS {
     public static final String EXTRA_CONTACT_ID ="extra_contact_id";
 
     public static final String VALID_EMAIL_ADDRESS_REGEX
-        = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+            = "^[A-z0-9._%+-]+@[A-z0-9.-]+\\.[A-z]{2,6}$";
 
 }
