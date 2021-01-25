@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.ContactAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.auth.LoginActivity;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeController;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SwipeControllerActions;
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 contactList.clear();
                 for (DocumentSnapshot snapshot : queryDocumentSnapshots) {
                     Contact contact = snapshot.toObject(Contact.class);
-                    contactList.add(contact);
+                    contactList.add(EncryptionV2.decryptContact(contact));
                 }
                 adapter.notifyDataSetChanged();
                 temporalList.addAll(contactList);

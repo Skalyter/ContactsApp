@@ -33,6 +33,7 @@ import com.google.firebase.storage.UploadTask;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.PhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
 
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ public class AddEditContactActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     contact = documentSnapshot.toObject(Contact.class);
+                    contact = EncryptionV2.decryptContact(contact);
 
                     if (Objects.requireNonNull(contact).getUriToImage() == null
                             || contact.getUriToImage().equals("")
@@ -179,6 +181,8 @@ public class AddEditContactActivity extends AppCompatActivity {
 
         contact.setContactId(docRef.getId());
 
+        contact = EncryptionV2.encryptContact(contact);
+
         docRef.set(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -204,6 +208,8 @@ public class AddEditContactActivity extends AppCompatActivity {
 
         retrieveDataFromViews();
 
+        contact = EncryptionV2.encryptContact(contact);
+
         db.collection("contacts").document(contact.getContactId())
                 .update("firstName", contact.getFirstName(),
                         "lastName", contact.getLastName(),
@@ -211,8 +217,8 @@ public class AddEditContactActivity extends AppCompatActivity {
                         "uriToImage", contact.getUriToImage(),
                         "phoneNumberList", contact.getPhoneNumberList())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
+                    @Override
+                    public void onSuccess(Void aVoid) {
                 Toast.makeText(AddEditContactActivity.this, R.string.update_success,
                         Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);

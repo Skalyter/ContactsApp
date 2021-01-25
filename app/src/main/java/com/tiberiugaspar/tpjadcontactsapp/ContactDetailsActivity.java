@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.SimplePhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +135,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 contact = documentSnapshot.toObject(Contact.class);
+                contact = EncryptionV2.decryptContact(contact);
                 initializeViews();
             }
         });
