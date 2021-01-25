@@ -280,8 +280,9 @@ public class AddEditContactActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()){
+
                         selectedImageUri = task.getResult();
-                        //todo change upload rules in storage
+
                         Glide.with(addPhoto.getContext()).load(selectedImageUri).circleCrop().into(addPhoto);
                     }
                 }

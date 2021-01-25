@@ -3,10 +3,13 @@ package com.tiberiugaspar.tpjadcontactsapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +48,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
     private ImageView contactImage;
     private TextView firstName, lastName, email;
+    private LinearLayout layoutEmail;
     private RecyclerView recyclerView;
     private SimplePhoneNumberAdapter adapter;
 
@@ -140,6 +144,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         firstName = findViewById(R.id.contact_first_name);
         lastName = findViewById(R.id.contact_last_name);
         email = findViewById(R.id.contact_email);
+        layoutEmail = findViewById(R.id.layout_email);
         recyclerView = findViewById(R.id.recycler_contacts);
         adapter = new SimplePhoneNumberAdapter(phoneNumberList, this);
         recyclerView.setAdapter(adapter);
@@ -167,9 +172,22 @@ public class ContactDetailsActivity extends AppCompatActivity {
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
         email.setText(contact.getEmail());
+
         phoneNumberList.clear();
         phoneNumberList.addAll(contact.getPhoneNumberList());
         adapter.notifyDataSetChanged();
+
+        layoutEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+
+                intent.setData(Uri.parse("mailto:" + contact.getEmail()));
+
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
