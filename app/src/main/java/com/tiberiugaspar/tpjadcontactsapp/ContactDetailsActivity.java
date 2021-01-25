@@ -47,7 +47,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
     private String contactId;
 
-    private ImageView contactImage;
+    private ImageView contactImage, iconMail;
     private TextView firstName, lastName, email;
     private LinearLayout layoutEmail;
     private SimplePhoneNumberAdapter adapter;
@@ -145,6 +145,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         firstName = findViewById(R.id.contact_first_name);
         lastName = findViewById(R.id.contact_last_name);
         email = findViewById(R.id.contact_email);
+        iconMail = findViewById(R.id.icon_mail);
         layoutEmail = findViewById(R.id.layout_email);
         RecyclerView recyclerView = findViewById(R.id.recycler_contacts);
         adapter = new SimplePhoneNumberAdapter(phoneNumberList, this);
@@ -173,24 +174,35 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
-        email.setText(contact.getEmail());
+
+        if (contact.getEmail() == null
+                || contact.getEmail().equals("")
+                || contact.getEmail().equals("null")) {
+
+            iconMail.setVisibility(View.GONE);
+
+        } else {
+
+            email.setText(contact.getEmail());
+
+            layoutEmail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+
+                    intent.setData(Uri.parse("mailto:" + contact.getEmail()));
+
+                    startActivity(intent);
+                }
+            });
+
+        }
 
         phoneNumberList.clear();
         phoneNumberList.addAll(contact.getPhoneNumberList());
         adapter.notifyDataSetChanged();
 
-        //todo show email icon and implement onclicklistener only if contact has an email address
-        layoutEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-
-                intent.setData(Uri.parse("mailto:" + contact.getEmail()));
-
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
