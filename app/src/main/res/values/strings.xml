@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">TPJAD Contacts App</string>
+    <string name="app_name" translatable="false">Contacts</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="register_message">No account yet? Create one.</string>

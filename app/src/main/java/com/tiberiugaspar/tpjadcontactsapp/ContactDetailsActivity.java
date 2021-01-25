@@ -30,7 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.SimplePhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
-import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +50,9 @@ public class ContactDetailsActivity extends AppCompatActivity {
     private ImageView contactImage;
     private TextView firstName, lastName, email;
     private LinearLayout layoutEmail;
-    private RecyclerView recyclerView;
     private SimplePhoneNumberAdapter adapter;
 
-    private List<PhoneNumber> phoneNumberList = new ArrayList<>();
+    private final List<PhoneNumber> phoneNumberList = new ArrayList<>();
 
     private FirebaseFirestore db;
 
@@ -135,7 +134,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 contact = documentSnapshot.toObject(Contact.class);
-                contact = EncryptionV2.decryptContact(contact);
+                contact = EncryptionUtils.decryptContact(contact);
                 initializeViews();
             }
         });
@@ -147,7 +146,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         lastName = findViewById(R.id.contact_last_name);
         email = findViewById(R.id.contact_email);
         layoutEmail = findViewById(R.id.layout_email);
-        recyclerView = findViewById(R.id.recycler_contacts);
+        RecyclerView recyclerView = findViewById(R.id.recycler_contacts);
         adapter = new SimplePhoneNumberAdapter(phoneNumberList, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -158,6 +157,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         if (contact.getUriToImage() != null
                 && !contact.getUriToImage().equals("")
                 && !contact.getUriToImage().equals("null")) {
+
             Glide.with(contactImage.getContext()).load(contact.getUriToImage()).circleCrop().into(contactImage);
         } else {
 
@@ -179,6 +179,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         phoneNumberList.addAll(contact.getPhoneNumberList());
         adapter.notifyDataSetChanged();
 
+        //todo show email icon and implement onclicklistener only if contact has an email address
         layoutEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

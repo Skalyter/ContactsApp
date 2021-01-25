@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.tiberiugaspar.tpjadcontactsapp.auth.LoginActivity;
-import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionUtils;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -20,7 +20,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         String userId = SharedPrefUtils.getUserId(getApplicationContext());
         if (userId == null) {
 
-            EncryptionV2.generateKeys(getApplicationContext());
+            EncryptionUtils.generateKeys(getApplicationContext());
         }
 
         FirebaseAuth auth = FirebaseAuth.getInstance();

@@ -33,7 +33,7 @@ import com.google.firebase.storage.UploadTask;
 import com.tiberiugaspar.tpjadcontactsapp.adapters.PhoneNumberAdapter;
 import com.tiberiugaspar.tpjadcontactsapp.models.Contact;
 import com.tiberiugaspar.tpjadcontactsapp.models.PhoneNumber;
-import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionV2;
+import com.tiberiugaspar.tpjadcontactsapp.utils.EncryptionUtils;
 import com.tiberiugaspar.tpjadcontactsapp.utils.SharedPrefUtils;
 
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class AddEditContactActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     contact = documentSnapshot.toObject(Contact.class);
-                    contact = EncryptionV2.decryptContact(contact);
+                    contact = EncryptionUtils.decryptContact(contact);
 
                     if (Objects.requireNonNull(contact).getUriToImage() == null
                             || contact.getUriToImage().equals("")
@@ -181,7 +181,7 @@ public class AddEditContactActivity extends AppCompatActivity {
 
         contact.setContactId(docRef.getId());
 
-        contact = EncryptionV2.encryptContact(contact);
+        contact = EncryptionUtils.encryptContact(contact);
 
         docRef.set(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -208,7 +208,7 @@ public class AddEditContactActivity extends AppCompatActivity {
 
         retrieveDataFromViews();
 
-        contact = EncryptionV2.encryptContact(contact);
+        contact = EncryptionUtils.encryptContact(contact);
 
         db.collection("contacts").document(contact.getContactId())
                 .update("firstName", contact.getFirstName(),

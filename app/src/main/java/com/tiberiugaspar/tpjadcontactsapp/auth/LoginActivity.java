@@ -57,8 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (fieldsAreValid()){
+
                 String emailS = email.getText().toString();
                 String passwordS = password.getText().toString();
+
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signInWithEmailAndPassword(emailS, passwordS)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
