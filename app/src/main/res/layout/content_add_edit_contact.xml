@@ -75,6 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
+                android:layout_marginStart="-12dp"
                 android:text="@string/phone_numbers"
                 android:textColor="#C3322323"
                 android:textSize="16sp" />
