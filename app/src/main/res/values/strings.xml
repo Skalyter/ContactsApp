@@ -1,14 +1,12 @@
 <resources>
-    <string name="app_name" translatable="false">Contacts</string>
+    <string name="app_name">Contacts</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="register_message">No account yet? Create one.</string>
     <string name="login_message">Already have an account? Click here to login.</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="contacts">Contacte</string>
-    <string name="title_activity_add_edit_contact">AddEditContactActivity</string>
+    <string name="title_activity_add_edit_contact" translatable="false">AddEditContactActivity</string>
     <string name="search_contacts">Search Contacts</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
@@ -25,21 +23,19 @@
     <string name="main">Main</string>
     <string name="add_another_number">Add another number</string>
     <string name="phone_numbers">Phone numbers</string>
-    <string name="select_app_to_continue">Alege o aplicatie pentru a continua</string>
+    <string name="select_app_to_continue">Choose an app to continue</string>
     <string name="remove_last_phone_number_warn">A contact must have at least a phone number!</string>
     <string name="first_name_error">Please fill in the name.</string>
     <string name="phone_number_error">Please enter at least one phone number</string>
     <string name="success_save">Contact saved successfully.</string>
     <string name="new_contact">Add a new contact</string>
-    <string name="call">Call</string>
-    <string name="sms">SMS</string>
     <string name="contact_add_success">Contact saved successfully.</string>
     <string name="contact_error_adding">There was a problem with inserting the contact.</string>
     <string name="first_name_label">First name</string>
     <string name="last_name_label">Last name</string>
     <string name="email">Email</string>
     <string name="phone_number_label">Phone number(s)</string>
-    <string name="title_activity_contact_details">ContactDetails</string>
+    <string name="title_activity_contact_details" translatable="false">ContactDetails</string>
     <string name="delete_contact">Delete contact</string>
     <string name="try_again_error_message">Something wrong happened, please try again.</string>
     <string name="contact_details">Contact details</string>
@@ -51,16 +47,16 @@
     <string name="btn_delete">Delete</string>
     <string name="btn_cancel">Cancel</string>
     <string name="remove_contact_success_message">Contact successfully removed.</string>
-    <string name="title_activity_authentication">AuthenticationActivity</string>
+    <string name="title_activity_authentication" translatable="false">AuthenticationActivity</string>
     <string name="password">Password</string>
-    <string name="login">login</string>
-    <string name="register">register</string>
+    <string name="login" translatable="false">login</string>
+    <string name="register" translatable="false">register</string>
     <string name="email_fill_in_warn">Please fill in the email address as example@domain.com</string>
     <string name="password_warn">Password must be at least 6 characters long</string>
-    <string name="key_logged_in">key_user_logged_in</string>
-    <string name="value_true">true</string>
+    <string name="key_logged_in" translatable="false">key_user_logged_in</string>
+    <string name="value_true" translatable="false">true</string>
     <string name="press_back_again">Press Back again to exit</string>
-    <string name="key_user_id">key_user_id</string>
+    <string name="key_user_id" translatable="false">key_user_id</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
 </resources>
